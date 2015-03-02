@@ -116,10 +116,11 @@ namespace AOJsubmitform
     {
       TwitterService.SendTweet(new SendTweetOptions
       {
-        Status =
-          Config.Usename + "がAOJ" + _problemNumber + ":" + ProblemName + "を言語:" + LanguageBox.Text +
-          "で" + status.ToAbbreviation() + "しました!\nhttp://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=" +
-          _problemNumber + "&lang=jp\n#AOJWAinfo #AOJ_WA #AOJsubmitinfo"
+        Status = string.Format(
+          "{0}がAOJ{1}:{2}を言語{3}で{4}しました!\nhttp://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id={2}" +
+            "&lang=jp\n#AOJ{4}info #AOJ_{4} #AOJsubmitinfo",
+          Config.Usename, _problemNumber, ProblemName, LanguageBox.Text, status.ToAbbreviation()
+        )
       });
     }
 
