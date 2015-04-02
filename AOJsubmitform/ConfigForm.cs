@@ -19,7 +19,7 @@ namespace AOJsubmitform
       UserNameBox.Text = config.Usename;
       PassWordBox.Text = config.Password;
       DirectoryNameBox.Text = config.SaveDirectory;
-      saveCheckBox.Checked = config.IsSaveProblemName;
+      asciiFilterCheckBox.Checked = config.IsSaveProblemName;
       TweetAllCheckBox.Checked = config.IsTweetAll;
     }
 
@@ -27,8 +27,9 @@ namespace AOJsubmitform
     {
       config.Usename = UserNameBox.Text;
       config.Password = PassWordBox.Text;
+      config.EnableAsciiFilter = asciiFilterCheckBox.Checked;
       config.SaveDirectory = DirectoryNameBox.Text;
-      config.IsSaveProblemName = saveCheckBox.Checked;
+      config.IsSaveProblemName = asciiFilterCheckBox.Checked;
       config.IsTweetAll = TweetAllCheckBox.Checked;
       config.Write();
     }

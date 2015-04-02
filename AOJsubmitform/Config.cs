@@ -8,6 +8,7 @@ namespace AOJsubmitform
     public string Usename { get; set; }
     public string Password { get; set; }
     public string SaveDirectory { get; set; }
+    public bool EnableAsciiFilter { get; set; }
     public bool IsSaveProblemName { get; set; }
     public bool IsTweetAll { get; set; }
 
@@ -23,6 +24,7 @@ namespace AOJsubmitform
     {
       File.WriteAllBytes("UserName.bin", Encoding.Unicode.GetBytes(Usename));
       File.WriteAllBytes("UserPassWord.bin", Encoding.Unicode.GetBytes(Password));
+      File.WriteAllBytes("AsciiFilter.bin", Encoding.Unicode.GetBytes(EnableAsciiFilter ? "enabled" : ""));
       File.WriteAllBytes("WriteDirectory.bin", Encoding.Unicode.GetBytes(SaveDirectory));
       File.WriteAllBytes("SaveProblemName.bin", Encoding.Unicode.GetBytes(IsSaveProblemName ? "save" : ""));
       File.WriteAllBytes("TweetAll.bin", Encoding.Unicode.GetBytes(IsTweetAll ? "tweet" : ""));
@@ -32,17 +34,8 @@ namespace AOJsubmitform
 
     public void Load()
     {
-      //新しい方式の設定記録ファイル（無意味なバイナリ式）から設定を呼び出す
-      if (File.Exists("UserName.bin") && File.Exists("UserPassWord.bin") && File.Exists("WriteDirectory.bin") && File.Exists("SaveProblemName.bin") && File.Exists("TweetAll.bin"))
-      {
-        Usename = Encoding.Unicode.GetString(File.ReadAllBytes("UserName.bin"));
-        Password = Encoding.Unicode.GetString(File.ReadAllBytes("UserPassWord.bin"));
-        SaveDirectory = Encoding.Unicode.GetString(File.ReadAllBytes("WriteDirectory.bin"));
-        IsSaveProblemName = Encoding.Unicode.GetString(File.ReadAllBytes("SaveProblemName.bin")) == "save";
-        IsTweetAll = Encoding.Unicode.GetString(File.ReadAllBytes("TweetAll.bin")) == "tweet";
-      }
       //旧形式の設定記録ファイルから設定を呼び出して新形式の設定記録方式に変更する
-      else if (File.Exists("Config.txt"))
+      if (File.Exists("Config.txt"))
       {
         StreamReader configFileReader = new StreamReader("Config.txt");
         Usename = configFileReader.ReadLine();
@@ -53,13 +46,35 @@ namespace AOJsubmitform
         //旧形式の設定ファイルを削除する
         File.Delete(@"Config.txt");
       }
-      //Twitterにおける設定も同様に行う
-      if (File.Exists("TwitterToken.bin") && File.Exists("TwitterTokenSecret.bin"))
+
+      //新しい方式の設定記録ファイル（無意味なバイナリ式）から設定を呼び出す
+      if (File.Exists("UserName.bin"))
       {
-        TwitterToken = Encoding.Unicode.GetString(File.ReadAllBytes("TwitterToken.bin"));
-        TwitterTokenSecret = Encoding.Unicode.GetString(File.ReadAllBytes("TwitterTokenSecret.bin"));
+        Usename = Encoding.Unicode.GetString(File.ReadAllBytes("UserName.bin"));
       }
-      else if (File.Exists("TwitterConfig.txt"))
+      if (File.Exists("UserPassWord.bin"))
+      {
+        Password = Encoding.Unicode.GetString(File.ReadAllBytes("UserPassWord.bin"));
+      }
+      if(File.Exists("AsciiFilter.bin"))
+      {
+        EnableAsciiFilter = Encoding.Unicode.GetString(File.ReadAllBytes("AsciiFilter.bin")) == "enabled";
+      }
+      if (File.Exists("WriteDirectory.bin"))
+      {
+        SaveDirectory = Encoding.Unicode.GetString(File.ReadAllBytes("WriteDirectory.bin"));
+      }
+      if (File.Exists("SaveProblemName.bin"))
+      {
+        IsSaveProblemName = Encoding.Unicode.GetString(File.ReadAllBytes("SaveProblemName.bin")) == "save";
+      }
+      if (File.Exists("TweetAll.bin"))
+      {
+        IsTweetAll = Encoding.Unicode.GetString(File.ReadAllBytes("TweetAll.bin")) == "tweet";
+      }
+
+      //Twitterにおける設定も同様に行う
+      if (File.Exists("TwitterConfig.txt"))
       {
         StreamReader twitterConfigFileReader = new StreamReader("TwitterConfig.txt");
         TwitterToken = twitterConfigFileReader.ReadLine();
@@ -67,6 +82,15 @@ namespace AOJsubmitform
         twitterConfigFileReader.Close();
         File.Delete(@"TwitterConfig.txt");
       }
+      if (File.Exists("TwitterToken.bin"))
+      {
+        TwitterToken = Encoding.Unicode.GetString(File.ReadAllBytes("TwitterToken.bin"));
+      }
+      if (File.Exists("TwitterTokenSecret.bin"))
+      {
+        TwitterTokenSecret = Encoding.Unicode.GetString(File.ReadAllBytes("TwitterTokenSecret.bin"));
+      }
+
       Write();
     }
   }

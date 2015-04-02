@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Forms;
 using TweetSharp;
 using System.Threading;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AOJsubmitform
 {
@@ -139,6 +141,14 @@ namespace AOJsubmitform
       }
     }
 
+    private string FilterSourceCode(string sourceCode)
+    {
+      IEnumerable<char> s = sourceCode;
+      if (Config.EnableAsciiFilter)
+        s = s.Where(c => (int)c < 128);
+      return string.Join("", s);
+    }
+
     private void SaveSourceCode(string sourceCode)
     {
       new FileWriter().Write(buildDirectoryName(), buildFileName(), sourceCode);
@@ -154,7 +164,7 @@ namespace AOJsubmitform
       JudgeStatus status;
       try
       {
-        status = new AojSubmit(aojuserAccount).Submit(_problemNumber, LanguageBox.Text, SourceCodeBox.Text);
+        status = new AojSubmit(aojuserAccount).Submit(_problemNumber, LanguageBox.Text, FilterSourceCode(SourceCodeBox.Text));
       }
       catch
       {
